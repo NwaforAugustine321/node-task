@@ -1,0 +1,16 @@
+<% if(it.layout_clean_mode) {%>
+<% layout("../layouts/admin/Clean") %>
+<% } else {%>
+<% layout("../layouts/admin/Main") %>
+<%}%>
+
+
+<style>
+  
+</style>
+<%~ includeFile("../partials/admin/Breadcrumb", it)%>
+
+
+<div class="tab-content mx-4 my-4">
+  
+</div>

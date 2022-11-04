@@ -2093,5 +2093,23 @@ multiple_btn_none.click(function () {
 });
 
 function checkAllergie(btn) {
-  var dataVal = $(btn).attr('data-val');
+  var dataValue = $(btn).attr('data-val');
+  const terminateRules = ['Banana', 'Olive', 'Sunflowers'];
+  if (terminateRules.includes(dataValue)) {
+    $('.terminate-message-container').css({
+      display: 'block',
+      background: '#090808e8',
+    });
+    $('.terminate-message').css({
+      color: 'white',
+    });
+
+    terminateQuiz();
+  }
+}
+
+function terminateQuiz() {
+  // get count from backend
+
+  window.location.replace('/');
 }
