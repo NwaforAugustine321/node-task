@@ -63,43 +63,49 @@ let selectionQuestionTimeoutCounter = 6000;
 let closeResponseTimeoutCounter = 5000;
 let timeout;
 
-const mainImage = $(".main-image-container img");
-fetch(url_preset + "/configurations")
+const mainImage = $('.main-image-container img');
+fetch(url_preset + '/configurations')
   .then((res) => res.json())
   .then((data) => {
     if (data.success) {
       mainConfigurations = data.payload;
-      mainImage.attr("src", url_preset + mainConfigurations.image.url);
+      mainImage.attr('src', url_preset + mainConfigurations.image.url);
     }
   });
 
-$(document).on("click", ".beginButton", async function () {
-  $("#page1").css("display", "none");
-  $("#page2").css("display", "none");
-  $("#page3").css("display", "none");
-  $("#page4").css("display", "none");
-  $("#page5").css("display", "none");
-  $("#page6").css("display", "none");
-  $("#page7").css("display", "none");
+$(document).on('click', '.beginButton', async function () {
+  $('#page1').css('display', 'none');
+  $('#page2').css('display', 'none');
+  $('#page3').css('display', 'none');
+  $('#page4').css('display', 'none');
+  $('#page5').css('display', 'none');
+  $('#page6').css('display', 'none');
+  $('#page7').css('display', 'none');
   await getQuizzesApi();
   showQuizTitle();
   return nextQuestion();
 });
 
-$(document).on("click", ".goBottom", function () {
-  $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+$(document).on('click', '.goBottom', function () {
+  $('html, body').animate({ scrollTop: $(document).height() }, 'slow');
 });
 
-$(document).on("click", ".nextBtn", function () {
+$(document).on('click', '.nextBtn', function () {
   nextBtnClicked = true;
 });
 
 let firstTime = true;
 let oldAnswers = [];
-const customerId = document.getElementById("customer-id");
-const customerEmail = document.getElementById("customer-email");
+const customerId = document.getElementById('customer-id');
+const customerEmail = document.getElementById('customer-email');
 if (customerId || customerEmail) {
-  fetch(url_preset + "/v1/api/order/customer?id=" + customerId?.innerText + "&email=" + customerEmail?.innerText)
+  fetch(
+    url_preset +
+      '/v1/api/order/customer?id=' +
+      customerId?.innerText +
+      '&email=' +
+      customerEmail?.innerText
+  )
     .then((res) => res.json())
     .then((data) => {
       if (data.success && data.data) {
@@ -112,8 +118,8 @@ if (customerId || customerEmail) {
 function getQuizzesApi() {
   return new Promise(function (resolve, reject) {
     $.ajax({
-      url: url_preset + "/admin/api/quizzes?limit=0",
-      type: "GET",
+      url: url_preset + '/admin/api/quizzes?limit=0',
+      type: 'GET',
       success: function (response) {
         data = response.data; //all data in the api
 
@@ -124,7 +130,7 @@ function getQuizzesApi() {
           eachLength = allItems[i].questions.length;
           totalQ = totalQ + eachLength;
 
-          $("#progressBarSection .progressBar .progressColumnsDiv").append(`
+          $('#progressBarSection .progressBar .progressColumnsDiv').append(`
             <button class="progressColumns">
               <p>${eachName}</p>
             </button>
@@ -141,69 +147,88 @@ function getQuizzesApi() {
 
 // function to show all quiz title page
 function showQuizTitle() {
-  $("#page1").css("display", "none");
-  $("#page3").css("display", "none");
-  $("#page5").css("display", "none");
-  $("#page6").css("display", "none");
-  $("#page7").css("display", "none");
-  $("#page2").css("display", "block");
-  $("#page2 .container .row").html("");
-  $("#progressBarSection").css("display", "none");
+  $('#page1').css('display', 'none');
+  $('#page3').css('display', 'none');
+  $('#page5').css('display', 'none');
+  $('#page6').css('display', 'none');
+  $('#page7').css('display', 'none');
+  $('#page2').css('display', 'block');
+  $('#page2 .container .row').html('');
+  $('#progressBarSection').css('display', 'none');
 
-  $("#page2 .container .row").append(`
+  $('#page2 .container .row').append(`
       <h4>Part ${allItems[currentQuizIndex].id}: ${allItems[currentQuizIndex].name}</h4>
       <h1>${allItems[currentQuizIndex].description}</h1>
     `);
   setTimeout(function () {
-    $("#page1").css("display", "none");
-    $("#page2").css("display", "none");
-    $("#page3").css("display", "block");
-    $("#page4").css("display", "none");
-    $("#page5").css("display", "none");
-    $("#page6").css("display", "none");
-    $("#page7").css("display", "none");
-    $("#progressBarSection").css("display", "block");
+    $('#page1').css('display', 'none');
+    $('#page2').css('display', 'none');
+    $('#page3').css('display', 'block');
+    $('#page4').css('display', 'none');
+    $('#page5').css('display', 'none');
+    $('#page6').css('display', 'none');
+    $('#page7').css('display', 'none');
+    $('#progressBarSection').css('display', 'block');
   }, nextQuestionTimeoutCounter);
 }
 
 function showPreparingPage() {
   clearTimeout(closeResponseTimeout);
-  $("#page1").css("display", "none");
-  $("#page2").css("display", "none");
-  $("#page3").css("display", "none");
-  $("#page4").css("display", "none");
-  $("#page5").css("display", "none");
-  $("#page7").css("display", "none");
-  $("#page6").css("display", "block");
-  $("#progressBarSection").css("display", "none");
+  $('#page1').css('display', 'none');
+  $('#page2').css('display', 'none');
+  $('#page3').css('display', 'none');
+  $('#page4').css('display', 'none');
+  $('#page5').css('display', 'none');
+  $('#page7').css('display', 'none');
+  $('#page6').css('display', 'block');
+  $('#progressBarSection').css('display', 'none');
   showResults();
 }
 
 async function showResults() {
-  const { accumlatedUniqueWeights, sortedWeightsArray } = getUniqueAccumlatedWeights(dataToReturn);
+  const { accumlatedUniqueWeights, sortedWeightsArray } =
+    getUniqueAccumlatedWeights(dataToReturn);
   const accumlatedBLActives = getUniqueBlackListActives(dataToReturn);
-  const { activesToAdd, activesToRemove } = await getEngineRules(accumlatedUniqueWeights);
-  const { sortedFinalActiveslist, sortedFinalActiveslistWithScores } = await calculatePrioritySelection(accumlatedUniqueWeights);
-  const filteredActivesListInitial = filterBlacklistActives(sortedFinalActiveslistWithScores);
-  finalActives = applyFinalCalculations(filteredActivesListInitial, activesToAdd, activesToRemove, dataToReturn);
+  const { activesToAdd, activesToRemove } = await getEngineRules(
+    accumlatedUniqueWeights
+  );
+  const { sortedFinalActiveslist, sortedFinalActiveslistWithScores } =
+    await calculatePrioritySelection(accumlatedUniqueWeights);
+  const filteredActivesListInitial = filterBlacklistActives(
+    sortedFinalActiveslistWithScores
+  );
+  finalActives = applyFinalCalculations(
+    filteredActivesListInitial,
+    activesToAdd,
+    activesToRemove,
+    dataToReturn
+  );
 
-  console.log("accumlated weights", accumlatedUniqueWeights);
-  console.log("black listed actives", accumlatedBLActives);
-  console.log("full actives list", sortedFinalActiveslist);
-  console.log("full actives list with scores", sortedFinalActiveslistWithScores);
-  console.log("after first filter", filteredActivesListInitial);
-  console.log("final actives List", finalActives);
+  console.log('accumlated weights', accumlatedUniqueWeights);
+  console.log('black listed actives', accumlatedBLActives);
+  console.log('full actives list', sortedFinalActiveslist);
+  console.log(
+    'full actives list with scores',
+    sortedFinalActiveslistWithScores
+  );
+  console.log('after first filter', filteredActivesListInitial);
+  console.log('final actives List', finalActives);
 
   if (accumlatedUniqueWeights) {
     await createProfile(accumlatedUniqueWeights);
   }
 
-  $("#page6").css("display", "none");
-  $("#page7 .nameDiv h5").html(localStorage.getItem("name"));
-  $("#page7").css("display", "block");
+  $('#page6').css('display', 'none');
+  $('#page7 .nameDiv h5').html(localStorage.getItem('name'));
+  $('#page7').css('display', 'block');
 } // showResults function ends here
 
-function applyFinalCalculations(blFilterdActiveList, activesToAdd, activesToRemove, answersArray) {
+function applyFinalCalculations(
+  blFilterdActiveList,
+  activesToAdd,
+  activesToRemove,
+  answersArray
+) {
   //select top 5
   //checkup here to see if it is first time or not
   let finalActivesList = [];
@@ -240,9 +265,9 @@ function applyFinalCalculations(blFilterdActiveList, activesToAdd, activesToRemo
   //   }
   // }
   if (firstTime) {
-    finalActivesList.unshift(["Base", 100]);
+    finalActivesList.unshift(['Base', 100]);
   } else {
-    finalActivesList.unshift(["Base Refill", 100]);
+    finalActivesList.unshift(['Base Refill', 100]);
   }
   return finalActivesList;
 }
@@ -351,7 +376,10 @@ async function getEngineRules(uniqueWeights) {
         //between
         let min = rule.min;
         let max = rule.max;
-        if (uniqueWeights[ruleOutputVariable] >= min && uniqueWeights[ruleOutputVariable] <= max) {
+        if (
+          uniqueWeights[ruleOutputVariable] >= min &&
+          uniqueWeights[ruleOutputVariable] <= max
+        ) {
           if (actionTaken == 1) {
             //add
             activesInQuestion.forEach((aiq) => {
@@ -384,7 +412,8 @@ function getUniqueAccumlatedWeights(answersArray) {
   let weightsArray = [];
   let accumlatedUniqueWeightsWihBase = {};
   answersArray.forEach(function (answer) {
-    if (answer.weights && Object.keys(answer.weights).length) weightsArray.push(answer.weights);
+    if (answer.weights && Object.keys(answer.weights).length)
+      weightsArray.push(answer.weights);
   });
   if (weightsArray.length == 0) {
     return { accumlatedUniqueWeightsWihBase, sortedWeightsArray: [] };
@@ -393,8 +422,12 @@ function getUniqueAccumlatedWeights(answersArray) {
     Object.keys(weight).forEach(function (key) {
       if (accumlatedUniqueWeightsWihBase.hasOwnProperty(key)) {
         accumlatedUniqueWeightsWihBase[key] = {
-          value: parseFloat(accumlatedUniqueWeightsWihBase[key].value) + parseFloat(weight[key].value),
-          base: parseFloat(accumlatedUniqueWeightsWihBase[key].base) + parseFloat(weight[key].base),
+          value:
+            parseFloat(accumlatedUniqueWeightsWihBase[key].value) +
+            parseFloat(weight[key].value),
+          base:
+            parseFloat(accumlatedUniqueWeightsWihBase[key].base) +
+            parseFloat(weight[key].base),
         };
       } else {
         accumlatedUniqueWeightsWihBase[key] = {
@@ -406,37 +439,60 @@ function getUniqueAccumlatedWeights(answersArray) {
   });
 
   let accumlatedUniqueWeights = {};
-  Object.entries(accumlatedUniqueWeightsWihBase).forEach(([variableName, { value, base }]) => {
-    accumlatedUniqueWeights[variableName] = parseFloat(value) / parseFloat(base);
-  });
-  let sortedEntries = Object.entries(accumlatedUniqueWeights).sort(function (a, b) {
+  Object.entries(accumlatedUniqueWeightsWihBase).forEach(
+    ([variableName, { value, base }]) => {
+      accumlatedUniqueWeights[variableName] =
+        parseFloat(value) / parseFloat(base);
+    }
+  );
+  let sortedEntries = Object.entries(accumlatedUniqueWeights).sort(function (
+    a,
+    b
+  ) {
     return b[1] - a[1];
   });
 
   return { accumlatedUniqueWeights, sortedWeightsArray: sortedEntries };
 }
 async function calculatePrioritySelection(accumlatedUniqueWeights) {
-  const outputVariableList = await getFullOutputVariablesList().then((data) => data.output_variables);
+  const outputVariableList = await getFullOutputVariablesList().then(
+    (data) => data.output_variables
+  );
   const activesList = await getFullActivesList().then((data) => data.actives);
 
   const finalActiveScores = {};
   for (const active of activesList) {
     //equation
     const activeName = active.name;
-    let activesListWeightsScores = active.variables_scores ? JSON.parse(active.variables_scores) : {};
+    let activesListWeightsScores = active.variables_scores
+      ? JSON.parse(active.variables_scores)
+      : {};
     //filter empty active weights score
-    activesListWeightsScores = Object.entries(activesListWeightsScores).filter(([outputVarName, score]) => {
-      return score;
-    });
-    let filteredActivesWeightScores = Object.fromEntries(activesListWeightsScores);
+    activesListWeightsScores = Object.entries(activesListWeightsScores).filter(
+      ([outputVarName, score]) => {
+        return score;
+      }
+    );
+    let filteredActivesWeightScores = Object.fromEntries(
+      activesListWeightsScores
+    );
     Object.entries(filteredActivesWeightScores).forEach(([name, score]) => {
       const outputVariableAccumlatedWeight = accumlatedUniqueWeights[name];
       if (outputVariableAccumlatedWeight) {
-        const outputVariablePriority = outputVariableList.find((ovar) => ovar.name == name).priority;
+        const outputVariablePriority = outputVariableList.find(
+          (ovar) => ovar.name == name
+        ).priority;
         if (finalActiveScores.hasOwnProperty(activeName)) {
-          finalActiveScores[activeName] = parseFloat(finalActiveScores[activeName]) + parseFloat(outputVariableAccumlatedWeight) * parseFloat(outputVariablePriority / 100) * parseFloat(score);
+          finalActiveScores[activeName] =
+            parseFloat(finalActiveScores[activeName]) +
+            parseFloat(outputVariableAccumlatedWeight) *
+              parseFloat(outputVariablePriority / 100) *
+              parseFloat(score);
         } else {
-          finalActiveScores[activeName] = parseFloat(outputVariableAccumlatedWeight) * parseFloat(outputVariablePriority / 100) * parseFloat(score);
+          finalActiveScores[activeName] =
+            parseFloat(outputVariableAccumlatedWeight) *
+            parseFloat(outputVariablePriority / 100) *
+            parseFloat(score);
         }
       }
     });
@@ -448,8 +504,12 @@ async function calculatePrioritySelection(accumlatedUniqueWeights) {
       finalDividedList[active] = parseFloat(score / 1000);
     }
   });
-  let sortedFinalActiveslistWithScores = Object.entries(finalDividedList).sort(([, a], [, b]) => b - a);
-  let sortedFinalActiveslist = Object.keys(finalDividedList).sort((a, b) => finalDividedList[b] - finalDividedList[a]);
+  let sortedFinalActiveslistWithScores = Object.entries(finalDividedList).sort(
+    ([, a], [, b]) => b - a
+  );
+  let sortedFinalActiveslist = Object.keys(finalDividedList).sort(
+    (a, b) => finalDividedList[b] - finalDividedList[a]
+  );
   return { sortedFinalActiveslist, sortedFinalActiveslistWithScores };
 }
 function getUniqueBlackListActives(answersArray) {
@@ -468,7 +528,7 @@ function getUniqueBlackListActives(answersArray) {
 
 async function createProfile(uniqueWeights) {
   const sections = await getProfileSections();
-  const container = $("#profile-result-container");
+  const container = $('#profile-result-container');
   for (const section of sections) {
     const sectionTitle = section.section_title;
     profile_characteristics[sectionTitle] = [];
@@ -479,15 +539,23 @@ async function createProfile(uniqueWeights) {
             <h1>${sectionTitle}</h1>
           </div>
           <div class="main-body">
-            ${await makePercentageDivs(uniqueWeights, section.output_variable_list, sectionTitle)}
+            ${await makePercentageDivs(
+              uniqueWeights,
+              section.output_variable_list,
+              sectionTitle
+            )}
         </div>
       </div>
     `;
     container.append(containerTemplate);
   }
 }
-async function makePercentageDivs(uniqueWeights, output_variable_list, sectionTitle) {
-  let accumlatedString = "";
+async function makePercentageDivs(
+  uniqueWeights,
+  output_variable_list,
+  sectionTitle
+) {
+  let accumlatedString = '';
 
   for (const item of output_variable_list) {
     let varName = item;
@@ -509,7 +577,10 @@ async function makePercentageDivs(uniqueWeights, output_variable_list, sectionTi
     </div>
     `;
     accumlatedString += tmp;
-    profile_characteristics[sectionTitle].push({ name: varName, percentage: percentage });
+    profile_characteristics[sectionTitle].push({
+      name: varName,
+      percentage: percentage,
+    });
   }
   return accumlatedString;
 }
@@ -518,22 +589,26 @@ async function getOutputVariableRangesResponses(varName, percentage) {
   if (outputVariable && outputVariable.ranges_response) {
     const rangesResponses = outputVariable.ranges_response;
     const requiredRange = rangesResponses.find(function (rr) {
-      let minRange = parseFloat(Object.keys(rr)[0].split("-")[0]);
-      let maxRange = parseFloat(Object.keys(rr)[0].split("-")[1]);
-      if (Math.round(percentage) >= minRange && Math.round(percentage) <= maxRange) return rr;
+      let minRange = parseFloat(Object.keys(rr)[0].split('-')[0]);
+      let maxRange = parseFloat(Object.keys(rr)[0].split('-')[1]);
+      if (
+        Math.round(percentage) >= minRange &&
+        Math.round(percentage) <= maxRange
+      )
+        return rr;
     });
     if (requiredRange) {
       let currResponse = requiredRange[Object.keys(requiredRange)[0]];
       return currResponse;
     }
   }
-  return "";
+  return '';
 }
 function getFullActivesList() {
   return new Promise(function (res, rej) {
     $.ajax({
-      url: url_preset + "/api/v1/actives",
-      type: "GET",
+      url: url_preset + '/api/v1/actives',
+      type: 'GET',
       success: function (response) {
         return res(response.data);
       },
@@ -548,8 +623,8 @@ function getFullActivesList() {
 function getFullOutputVariablesList() {
   return new Promise(function (res, rej) {
     $.ajax({
-      url: url_preset + "/api/v1/output-variables",
-      type: "GET",
+      url: url_preset + '/api/v1/output-variables',
+      type: 'GET',
       success: function (response) {
         return res(response.data);
       },
@@ -565,7 +640,7 @@ function getOutputVariable(name) {
   return new Promise(function (res, rej) {
     $.ajax({
       url: url_preset + `/api/v1/output-variable/${name}`,
-      type: "GET",
+      type: 'GET',
       success: function (response) {
         return res(response.data);
       },
@@ -580,8 +655,8 @@ function getOutputVariable(name) {
 function getProfileSections() {
   return new Promise(function (res, rej) {
     $.ajax({
-      url: url_preset + "/api/v1/profile-sections",
-      type: "GET",
+      url: url_preset + '/api/v1/profile-sections',
+      type: 'GET',
       success: function (response) {
         return res(response.data);
       },
@@ -597,8 +672,12 @@ function getProfileSections() {
 function getActivesList(outputVariablesNames) {
   return new Promise(function (res, rej) {
     $.ajax({
-      url: url_preset + `/api/v1/output-variables/actives-list?names_list=${outputVariablesNames.join(",")}`,
-      type: "GET",
+      url:
+        url_preset +
+        `/api/v1/output-variables/actives-list?names_list=${outputVariablesNames.join(
+          ','
+        )}`,
+      type: 'GET',
       success: function (response) {
         return res(response.data);
       },
@@ -613,8 +692,8 @@ function getActivesList(outputVariablesNames) {
 function getRules() {
   return new Promise(function (res, rej) {
     $.ajax({
-      url: url_preset + "/api/v1/rules",
-      type: "GET",
+      url: url_preset + '/api/v1/rules',
+      type: 'GET',
       success: function (response) {
         return res(response.data);
       },
@@ -646,7 +725,10 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
   clearTimeout(timeout);
   clearTimeout(closeResponseTimeout);
   if (goBack) {
-    let stepBack = uniqueQuestionsShowed.length - 2 < 0 ? 0 : uniqueQuestionsShowed.length - 2;
+    let stepBack =
+      uniqueQuestionsShowed.length - 2 < 0
+        ? 0
+        : uniqueQuestionsShowed.length - 2;
     let backQuizId = uniqueQuestionsShowed[stepBack].quiz;
     if (stepBack !== 0) {
       uniqueQuestionsShowed.pop();
@@ -657,15 +739,19 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
 
     progress = uniqueQuestionsShowed[stepBack].progress;
     if (progress < 0) progress = 0;
-    $("#myBar").css("width", progress + "%");
+    $('#myBar').css('width', progress + '%');
 
-    var divsToHide = document.getElementsByClassName("answerRow");
+    var divsToHide = document.getElementsByClassName('answerRow');
     for (let i = 0; i < divsToHide.length; i++) {
-      divsToHide[i].style.display = "none";
+      divsToHide[i].style.display = 'none';
     }
-    $("#questionRow").css("display", "none");
+    $('#questionRow').css('display', 'none');
     let dependedOnQuestions = totalQuizQuestions.filter(function (qs) {
-      return qs.depends_on && parseInt(qs.depends_on.split("|")[0]) == totalQuizQuestions[currentQuestionCounter].id;
+      return (
+        qs.depends_on &&
+        parseInt(qs.depends_on.split('|')[0]) ==
+          totalQuizQuestions[currentQuestionCounter].id
+      );
     });
     if (dependedOnQuestions.length > 0) {
       dependedOnQuestions.forEach((dq) => {
@@ -673,12 +759,12 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
           return answerObj.question.id != dq.id;
         });
       });
-      localStorage.setItem("answers", JSON.stringify(dataToReturn));
+      localStorage.setItem('answers', JSON.stringify(dataToReturn));
     }
     if (goBackFromResponse) {
-      $("#page5").css("display", "none");
-      $("#page4").css("display", "none");
-      $("#page3").css("display", "block");
+      $('#page5').css('display', 'none');
+      $('#page4').css('display', 'none');
+      $('#page3').css('display', 'block');
     }
     return await askQuestion(totalQuizQuestions, currentQuestionCounter, true);
   }
@@ -687,23 +773,26 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
   if (isNaN(increase) || increase == Infinity) increase = 0;
   else increase = increase * (1 / 3);
   progress = progress + increase;
-  $("#myBar").css("width", progress + "%");
+  $('#myBar').css('width', progress + '%');
 
   timerStart = true; // allowing the timer to work for questions
   nextBtnClicked = false; // resetting next button is clicked to not  clicked
 
   //first get the answer of previous question and store it.
   if (currentActiveAnswerType && !isSkipStoreAnswer) {
-    await storeAnswer(totalQuizQuestions[currentQuestionCounter - 1], currentActiveAnswerType);
+    await storeAnswer(
+      totalQuizQuestions[currentQuestionCounter - 1],
+      currentActiveAnswerType
+    );
   }
 
   weights = {};
-  sliderAns = "";
+  sliderAns = '';
   sliderBLActives = [];
-  tempMcqAns = "";
+  tempMcqAns = '';
   tempMcqAnsValue = 0;
   tempMcqiBLActives = [];
-  tempMcqiAns = "";
+  tempMcqiAns = '';
   tempMcqiAnsValue = 0;
   tempMcqBLActives = [];
   minRangeVal = null;
@@ -715,18 +804,18 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
   if (dataToReturn[0] != null && !isExecuted) {
     isExecuted = true;
     var tempName = dataToReturn[0].answer;
-    tempName = tempName.split(" ")[0]; //get first name only
+    tempName = tempName.split(' ')[0]; //get first name only
     tempName = tempName.toUpperCase();
-    $("#page3 .container .row .createdByDiv").html("");
-    $("#page3 .container .row .createdByDiv").append(`
+    $('#page3 .container .row .createdByDiv').html('');
+    $('#page3 .container .row .createdByDiv').append(`
           Created By ${tempName}
       `);
-    $("#page4 .container .row .createdByDiv").html("");
-    $("#page4 .container .row .createdByDiv").append(`
+    $('#page4 .container .row .createdByDiv').html('');
+    $('#page4 .container .row .createdByDiv').append(`
           Created By ${tempName}
       `);
-    $("#page5 .container .row .createdByDiv").html("");
-    $("#page5 .container .row .createdByDiv").append(`
+    $('#page5 .container .row .createdByDiv').html('');
+    $('#page5 .container .row .createdByDiv').append(`
           Created By ${tempName}
       `);
   } //displaying user name on top ends here
@@ -736,7 +825,9 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
 
   // checking if there is any resp  onse in question or answer
   if (currentQuestionCounter != 0) {
-    apiQues = totalQuizQuestions.find((ques) => ques.id == lastShowedQuestionId);
+    apiQues = totalQuizQuestions.find(
+      (ques) => ques.id == lastShowedQuestionId
+    );
     let lastAnswerObject = dataToReturn.find(function (ansObj) {
       return ansObj.question.id == apiQues?.id;
     });
@@ -782,9 +873,9 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
       if (apiQues.id == 20 && apiQues.type == 7) {
         if (Array.isArray(lastAnswerObject.answer)) {
           if (lastAnswerObject.answer.length == 1) {
-            showResponse(null, "We’ll make sure to leave this one out");
+            showResponse(null, 'We’ll make sure to leave this one out');
           } else if (lastAnswerObject.answer.length > 1) {
-            showResponse(null, "We’ll make sure to leave those out");
+            showResponse(null, 'We’ll make sure to leave those out');
           }
         }
       } else if (apiQues.type == 1 && apiQues.id == 1) {
@@ -796,26 +887,32 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
           var replaceWith = localStorage.getItem(responseArguments[0]);
           if (replaceWith) {
             replaceWith = replaceWith.toUpperCase();
-            responseHeader = inject_substitute(responseHeader, "name", replaceWith);
-            responseHeader = responseHeader.split(" ")[0];
+            responseHeader = inject_substitute(
+              responseHeader,
+              'name',
+              replaceWith
+            );
+            responseHeader = responseHeader.split(' ')[0];
 
-            $("#page3").css("display", "none");
-            $("#page4").css("display", "block");
-            $("#page4 .customImgRow .imgRowInner p").html("");
-            $("#page4 .customImgRow .imgRowInner p").css("display", "block");
-            $("#page4 .customImgRow .imgRowInner p").append(`${responseHeader}`);
+            $('#page3').css('display', 'none');
+            $('#page4').css('display', 'block');
+            $('#page4 .customImgRow .imgRowInner p').html('');
+            $('#page4 .customImgRow .imgRowInner p').css('display', 'block');
+            $('#page4 .customImgRow .imgRowInner p').append(
+              `${responseHeader}`
+            );
             responseOnGoing = true;
             hasNoResponse = false;
-            // closeResponseTimeout = setTimeout(async () => {
-            //   closeResponse();
-            // }, closeResponseTimeoutCounter);
+            closeResponseTimeout = setTimeout(async () => {
+              closeResponse();
+            }, closeResponseTimeoutCounter);
           }
         } else if (apiQues.answers && apiQues.answers[0].responseBody) {
-          $("#page3").css("display", "none");
-          $("#page4").css("display", "block");
-          $("#page4 .customImgRow .imgRowInner p").html("");
-          $("#page4 .customImgRow .imgRowInner p").css("display", "block");
-          $("#page4 .customImgRow .imgRowInner p").append(`${responseHeader}`);
+          $('#page3').css('display', 'none');
+          $('#page4').css('display', 'block');
+          $('#page4 .customImgRow .imgRowInner p').html('');
+          $('#page4 .customImgRow .imgRowInner p').css('display', 'block');
+          $('#page4 .customImgRow .imgRowInner p').append(`${responseHeader}`);
           responseOnGoing = true;
           hasNoResponse = false;
           closeResponseTimeout = setTimeout(async () => {
@@ -823,9 +920,9 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
           }, closeResponseTimeoutCounter);
         }
       } else if (apiQues.type == 3 && apiQues.id == 2 && age) {
-        if (age < 25) age = "<25";
-        else if (age >= 25 && age <= 40) age = "25-40";
-        else if (age > 40) age = ">40";
+        if (age < 25) age = '<25';
+        else if (age >= 25 && age <= 40) age = '25-40';
+        else if (age > 40) age = '>40';
         let correctAgeAnswer = apiQues.answers.find(function (cAns) {
           return cAns.answer == age;
         });
@@ -835,14 +932,21 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
           showResponse(responseHeader, responseBody);
         }
       } else if ([4, 5, 6].includes(apiQues.type)) {
-        if (fullAnswerObject && (fullAnswerObject.response_header || fullAnswerObject.response_body)) {
+        if (
+          fullAnswerObject &&
+          (fullAnswerObject.response_header || fullAnswerObject.response_body)
+        ) {
           if (fullAnswerObject.response_arguments) {
             responseHeader = fullAnswerObject.response_header;
             var responseArguments = fullAnswerObject.response_arguments;
             responseArguments = JSON.parse(responseArguments);
             var replaceWith = localStorage.getItem(responseArguments[0]);
             replaceWith = replaceWith.toUpperCase();
-            responseHeader = inject_substitute(responseHeader, "name", replaceWith);
+            responseHeader = inject_substitute(
+              responseHeader,
+              'name',
+              replaceWith
+            );
             responseBody = fullAnswerObject.response_body;
           } else {
             responseHeader = fullAnswerObject.response_header;
@@ -857,13 +961,13 @@ async function nextQuestion(goBack, goBackFromResponse, fromDependedOn) {
   }
 
   // hide all answers row
-  var divsToHide = document.getElementsByClassName("answerRow"); //divsToHide is an array
+  var divsToHide = document.getElementsByClassName('answerRow'); //divsToHide is an array
   for (var i = 0; i < divsToHide.length; i++) {
-    divsToHide[i].style.display = "none"; // depending on what you're doing
+    divsToHide[i].style.display = 'none'; // depending on what you're doing
   }
 
   //hide question row
-  $("#questionRow").css("display", "none");
+  $('#questionRow').css('display', 'none');
 
   if (hasNoResponse) {
     if (currentQuestionCounter < totalQuizQuestions.length) {
