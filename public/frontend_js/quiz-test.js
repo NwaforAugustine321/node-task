@@ -1405,7 +1405,7 @@ async function askQuestion(totalQuizQuestions, counter, fromBack) {
           <div class="selectionOptions">
             <button data-val="None" data-id="${
               ques.answers.length + 1
-            }" class="selectionBtns selectionBtn" id="multiple-option_btn">None</button>
+            }" class="selectionBtns selectionBtn" id="multiple-none">None</button>
           </div>
       `);
 
@@ -1473,7 +1473,7 @@ async function storeAnswer(currentQuestion, currentActiveAnswerType) {
   let answerExists = dataToReturn.findIndex(function (answerObject) {
     return answerObject.question?.id == temp.question?.id;
   });
-  console.log(answerExists);
+  //console.log(answerExists);
   if (currentActiveAnswerType == 'typeText') {
     ans = $('#' + currentActiveAnswerType + ' input').val();
     if (saveResponseInto == 'name') {
@@ -2081,10 +2081,17 @@ function handleImageMissing(self) {
   $(self).addClass('image-missing');
 }
 
-const btn = document.getElementById('multiple-option_btn');
+const multiple_btn = $('#multiple-option_btn');
+const multiple_btn_none = $('#multiple-none');
 
-btn.addEventListener('click', function () {
-  function checkAllergie() {}
-
-  checkAllergie();
+multiple_btn.click(function () {
+  checkAllergie(this);
 });
+
+multiple_btn_none.click(function () {
+  handleNoneOfTheAbove();
+});
+
+function checkAllergie(btn) {
+  var dataVal = $(btn).attr('data-val');
+}
